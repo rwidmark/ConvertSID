@@ -1,5 +1,4 @@
-﻿Function Convert-SID
-{
+﻿Function Convert-SID {
     <#
         .SYNOPSIS
         Convert SID to plain text
@@ -18,16 +17,17 @@
         # Return the translation of the 3 letter code to the full name of the manufacturer, in this example it will return Philips
 
         .LINK
-        https://github.com/rstolpe/ConvertSID/blob/main/README.md
+        https://github.com/rwidmark/ConvertSID/blob/main/README.md
 
         .NOTES
-        Author:         Robin Stolpe
-        Mail:           robin@stolpe.io
-        Twitter:        https://twitter.com/rstolpes
-        Linkedin:       https://www.linkedin.com/in/rstolpe/
-        Website/Blog:   https://stolpe.io
-        GitHub:         https://github.com/rstolpe
-        PSGallery:      https://www.powershellgallery.com/profiles/rstolpe
+        Author:         Robin Widmark
+        Mail:           robin@widmark.dev
+        Website/Blog:   https://widmark.dev
+        X:              https://x.com/widmark_robin
+        Mastodon:       https://mastodon.social/@rwidmark
+		YouTube:		https://www.youtube.com/@rwidmark
+        Linkedin:       https://www.linkedin.com/in/rwidmark/
+        GitHub:         https://github.com/rwidmark
     #>
 
     [CmdletBinding()]
@@ -39,23 +39,18 @@
         [Switch]$Trim
     )
 
-    foreach ($s in $SID)
-    {
-        try
-        {
+    foreach ($s in $SID) {
+        try {
             $convertSID = New-Object System.Security.Principal.SecurityIdentifier($s)
             $Userobj = $convertSID.Translate([System.Security.Principal.NTAccount])
-            if ($Trim -eq $true)
-            {
+            if ($Trim -eq $true) {
                 $Userobj.Value.Split("\") | Select-Object -Last 1
             }
-            else
-            {
+            else {
                 $Userobj.Value
             }
         }
-        catch
-        {
+        catch {
             Write-Error -Message "Can't convert SID $s"
             continue
         }
