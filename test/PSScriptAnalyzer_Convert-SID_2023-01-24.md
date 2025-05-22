@@ -6,7 +6,7 @@ Extent               : $SID
 RuleName             : PSUseProcessBlockForPipelineCommand
 Severity             : Warning
 ScriptName           : Convert-SID.ps1
-ScriptPath           : /Users/rstolpe/Dev/GitHub/ConvertSID/.src/public/function/Convert-SID.ps1
+ScriptPath           : /Users/rwidmark/Dev/GitHub/ConvertSID/.src/public/function/Convert-SID.ps1
 RuleSuppressionID    : SID
 SuggestedCorrections : 
 IsSuppressed         : False

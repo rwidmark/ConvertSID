@@ -35,7 +35,7 @@ Install-Module -Name ConvertSID -Scope AllUsers -Force
 ```
 Convert-SID -SID "<SID>"
 ```
-If this SID was for an Active Directory user this would return the domain\username of that user, example stolpe.io\rwidmark  
+If this SID was for an Active Directory user this would return the domain\username of that user, example widmark.dev\rwidmark  
 You can also add multiple SIDs at the same time just separate them with a comma, example ```Convert-SID -SID "<SID1>", "<SID2>"```
 ```
 Convert-SID -SID "<SID>" -Trim
