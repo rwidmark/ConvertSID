@@ -17,7 +17,7 @@ I have added the result from PSScriptAnalyzer in [test folder](https://github.co
 * [GitHub](https://github.com/rwidmark)
 
 # Help
-Below I have specified things that I think will help people with this module.  
+Below I have specified things that I think will help people with this module..  
 You can also see the API for each function in the [help folder](https://github.com/rwidmark/ConvertSID/tree/main/help)
 
 ## Install
