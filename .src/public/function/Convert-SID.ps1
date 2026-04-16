@@ -1,4 +1,4 @@
-﻿Function Convert-SID {
+Function Convert-SID {
     <#
         .SYNOPSIS
         Convert SID to plain text
@@ -7,14 +7,18 @@
         Convert SID to plain readable text
 
         .PARAMETER SID
-        Enter SID to convert, multiple inputs are accepted
+        Enter one or more security identifiers (SIDs) to convert.
 
         .PARAMETER Trim
-        Use this switch if you want to remove the first part of the output to \ sign. Example, it will remove domain\ from domain\username and only output username
+        Return only the account name portion and omit the domain or computer prefix.
 
         .EXAMPLE
-        Convert-MonitorManufacturer -Manufacturer "PHL"
-        # Return the translation of the 3 letter code to the full name of the manufacturer, in this example it will return Philips
+        Convert-SID -SID 'S-1-5-18'
+        Returns the translated account name for the SID.
+
+        .EXAMPLE
+        'S-1-5-18' | Convert-SID -Trim
+        Returns only the account name portion of the translated SID.
 
         .LINK
         https://github.com/rwidmark/ConvertSID/blob/main/README.md
@@ -30,29 +34,57 @@
         GitHub:         https://github.com/rwidmark
     #>
 
-    [CmdletBinding()]
+    [CmdletBinding(SupportsShouldProcess = $true)]
     Param(
-        [Parameter(Mandatory = $true, ValueFromPipelineByPropertyName, HelpMessage = "Enter SID to convert, multiple inputs are accepted")]
+        [Parameter(
+            Mandatory = $true,
+            Position = 0,
+            ValueFromPipeline = $true,
+            ValueFromPipelineByPropertyName = $true,
+            HelpMessage = "Enter one or more security identifiers (SIDs) to convert."
+        )]
         [ValidateNotNullOrEmpty()]
+        [ValidatePattern('^S-\d-(?:\d+-){1,14}\d+$')]
         [String[]]$SID,
-        [Parameter(Mandatory = $False, HelpMessage = "Use this if you want to remove the first part of the output to \ sign. Example, it will remove domain\ from domain\username output")]
+        [Parameter(HelpMessage = "Return only the account name portion and omit the domain or computer prefix.")]
         [Switch]$Trim
     )
 
-    foreach ($s in $SID) {
-        try {
-            $convertSID = New-Object System.Security.Principal.SecurityIdentifier($s)
-            $Userobj = $convertSID.Translate([System.Security.Principal.NTAccount])
-            if ($Trim -eq $true) {
-                $Userobj.Value.Split("\") | Select-Object -Last 1
+    process {
+        foreach ($CurrentSID in $SID) {
+            if (-not $PSCmdlet.ShouldProcess($CurrentSID, 'Translate SID to account name')) {
+                continue
             }
-            else {
-                $Userobj.Value
+
+            Write-Verbose "Translating SID '$CurrentSID'."
+
+            try {
+                $accountValue = [System.Security.Principal.SecurityIdentifier]::new($CurrentSID).Translate([System.Security.Principal.NTAccount]).Value
+
+                if ($Trim.IsPresent) {
+                    # Avoid Split()/Select-Object to keep trimming fast and allocation-light.
+                    $separatorIndex = $accountValue.LastIndexOf('\')
+                    if ($separatorIndex -ge 0) {
+                        $accountValue.Substring($separatorIndex + 1)
+                    }
+                    else {
+                        $accountValue
+                    }
+                }
+                else {
+                    $accountValue
+                }
             }
-        }
-        catch {
-            Write-Error -Message "Can't convert SID $s"
-            continue
+            catch {
+                $PSCmdlet.WriteError(
+                    [System.Management.Automation.ErrorRecord]::new(
+                        $_.Exception,
+                        'SidTranslationFailed',
+                        [System.Management.Automation.ErrorCategory]::InvalidData,
+                        $CurrentSID
+                    )
+                )
+            }
         }
     }
 }

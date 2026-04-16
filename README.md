@@ -41,4 +41,11 @@ You can also add multiple SIDs at the same time just separate them with a comma,
 Convert-SID -SID "<SID>" -Trim
 ```
 Sometimes you don't want the domain\ part in return then you can use -Trim switch and it will just return the name after the domain\, example rwidmark
-
+```
+'<SID>' | Convert-SID -Verbose
+```
+Use `-Verbose` to see which SID is currently being translated.
+```
+Convert-SID -SID "<SID>" -WhatIf
+```
+Use `-WhatIf` to preview the translation requests without performing them.

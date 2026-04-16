@@ -7,7 +7,7 @@ SYNOPSIS
     
     
 SYNTAX
-    Convert-SID [-SID] <String[]> [-Trim] [<CommonParameters>]
+    Convert-SID [-SID] <String[]> [-Trim] [-WhatIf] [-Confirm] [<CommonParameters>]
     
     
 DESCRIPTION
@@ -16,16 +16,16 @@ DESCRIPTION
 
 PARAMETERS
     -SID <String[]>
-        Enter SID to convert, multiple inputs are accepted
+        Enter one or more security identifiers (SIDs) to convert.
         
         Required?                    true
-        Position?                    1
+        Position?                    0
         Default value                
-        Accept pipeline input?       true (ByPropertyName)
+        Accept pipeline input?       true (ByValue, ByPropertyName)
         Accept wildcard characters?  false
         
     -Trim [<SwitchParameter>]
-        Use this switch if you want to remove the first part of the output to \ sign. Example, it will remove domain\ from domain\username and only output username
+        Return only the account name portion and omit the domain or computer prefix.
         
         Required?                    false
         Position?                    named
@@ -56,8 +56,14 @@ NOTES
     
     -------------------------- EXAMPLE 1 --------------------------
     
-    PS > Convert-MonitorManufacturer -Manufacturer "PHL"
-    # Return the translation of the 3 letter code to the full name of the manufacturer, in this example it will return Philips
+    PS > Convert-SID -SID 'S-1-5-18'
+    Returns the translated account name for the SID.
+    
+    
+    -------------------------- EXAMPLE 2 --------------------------
+    
+    PS > 'S-1-5-18' | Convert-SID -Trim
+    Returns only the account name portion of the translated SID.
     
     
     
@@ -67,5 +73,4 @@ NOTES
     
 RELATED LINKS
     https://github.com/rwidmark/ConvertSID/blob/main/README.md
-
 
