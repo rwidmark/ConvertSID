@@ -57,13 +57,13 @@ NOTES
     -------------------------- EXAMPLE 1 --------------------------
     
     PS > Convert-SID -SID 'S-1-5-18'
-    Returns the translated account name for the SID.
+    NT AUTHORITY\SYSTEM
     
     
     -------------------------- EXAMPLE 2 --------------------------
     
     PS > 'S-1-5-18' | Convert-SID -Trim
-    Returns only the account name portion of the translated SID.
+    SYSTEM
     
     
     
@@ -73,4 +73,3 @@ NOTES
     
 RELATED LINKS
     https://github.com/rwidmark/ConvertSID/blob/main/README.md
-

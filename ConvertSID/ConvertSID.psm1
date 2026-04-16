@@ -37,11 +37,11 @@ Function Convert-SID {
 
         .EXAMPLE
         Convert-SID -SID 'S-1-5-18'
-        Returns the translated account name for the SID.
+        Returns NT AUTHORITY\SYSTEM.
 
         .EXAMPLE
         'S-1-5-18' | Convert-SID -Trim
-        Returns only the account name portion of the translated SID.
+        Returns SYSTEM.
 
         .LINK
         https://github.com/rwidmark/ConvertSID/blob/main/README.md
@@ -58,6 +58,7 @@ Function Convert-SID {
     #>
 
     [CmdletBinding(SupportsShouldProcess = $true)]
+    [OutputType([String])]
     Param(
         [Parameter(
             Mandatory = $true,
@@ -67,7 +68,7 @@ Function Convert-SID {
             HelpMessage = "Enter one or more security identifiers (SIDs) to convert."
         )]
         [ValidateNotNullOrEmpty()]
-        [ValidatePattern('^S-\d-(?:\d+-){1,14}\d+$')]
+        [ValidatePattern('^S-\d+-\d+(?:-\d+){0,15}$')]
         [String[]]$SID,
         [Parameter(HelpMessage = "Return only the account name portion and omit the domain or computer prefix.")]
         [Switch]$Trim
@@ -82,7 +83,9 @@ Function Convert-SID {
             Write-Verbose "Translating SID '$CurrentSID'."
 
             try {
-                $accountValue = [System.Security.Principal.SecurityIdentifier]::new($CurrentSID).Translate([System.Security.Principal.NTAccount]).Value
+                $securityIdentifier = [System.Security.Principal.SecurityIdentifier]::new($CurrentSID)
+                $account = $securityIdentifier.Translate([System.Security.Principal.NTAccount])
+                $accountValue = $account.Value
 
                 if ($Trim.IsPresent) {
                     # Avoid Split()/Select-Object to keep trimming fast and allocation-light.
